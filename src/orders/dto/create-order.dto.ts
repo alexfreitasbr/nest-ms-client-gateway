@@ -1,6 +1,4 @@
 import {
-  IsBoolean,
-  IsDate,
   IsIn,
   IsInt,
   IsNotEmpty,
@@ -10,7 +8,6 @@ import {
   IsString,
 } from 'class-validator';
 import { OrdersStatus, OrderStatusList } from './order.interface';
-
 
 export class CreateOrderDto {
   @IsString()
@@ -25,4 +22,8 @@ export class CreateOrderDto {
   @IsNumber()
   @IsPositive()
   items: number;
+
+  @IsIn(OrderStatusList)
+  @IsOptional()
+  status?: OrdersStatus;
 }
