@@ -13,3 +13,28 @@ export const OrderStatusList = [
   'DELIVERED',
   'CANCELLED',
 ];
+
+export type OrderBy =
+  | 'userId'
+  | 'totalAmount'
+  | 'items'
+  | 'status'
+  | 'paid'
+  | 'paidAt'
+  | 'createdAt'
+  | 'updatedAt';
+
+export const OrderByList = [
+  'userId',
+  'totalAmount',
+  'items',
+  'status',
+  'paid',
+  'paidAt',
+  'createdAt',
+  'updatedAt',
+];
+
+export type OrderDirection = 'asc' | 'desc';
+
+export const OrderDirectionList: OrderDirection[] = ['asc', 'desc'];

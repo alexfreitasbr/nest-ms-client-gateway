@@ -15,6 +15,7 @@ import { ORDERS_SERVICE } from 'src/config';
 import { PaginationDto } from 'src/common';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { catchError } from 'rxjs';
+import { PaginationOrderDto } from 'src/common/dto/pagination-order.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -33,8 +34,12 @@ export class OrdersController {
   }
 
   @Get()
-  findAllOrders(@Query() paginationDto: PaginationDto) {
-    return this.ordersClient.send('findAllOrders', paginationDto);
+  findAllOrders(@Query() paginationOrderDto: PaginationOrderDto) {
+    return this.ordersClient.send('findAllOrders', paginationOrderDto).pipe(
+      catchError((err) => {
+        throw new RpcException(err);
+      }),
+    );
   }
 
   @Get(':id')
@@ -51,9 +56,15 @@ export class OrdersController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateOrderDto: UpdateOrderDto,
   ) {
-    return this.ordersClient.send('changeOrderStatus', {
-      id,
-      ...updateOrderDto,
-    });
+    return this.ordersClient
+      .send('changeOrderStatus', {
+        id,
+        ...updateOrderDto,
+      })
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(err);
+        }),
+      );
   }
 }
