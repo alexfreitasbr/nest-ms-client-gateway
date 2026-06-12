@@ -1,29 +1,38 @@
 import {
-  IsIn,
-  IsInt,
+  ArrayMinSize,
+  IsArray,
   IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsPositive,
   IsString,
+  ValidateNested,
 } from 'class-validator';
-import { OrdersStatus, OrderStatusList } from './order.interface';
+import { Type } from 'class-transformer';
+import { OrderItemDto } from './order-item.dto';
 
 export class CreateOrderDto {
   @IsString()
   @IsNotEmpty()
   userId: string;
 
-  @IsNumber()
-  @IsPositive()
-  totalAmount: number;
+  @IsArray()
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => OrderItemDto)
+  items: OrderItemDto[];
 
-  @IsInt()
-  @IsNumber()
-  @IsPositive()
-  items: number;
+  // @IsString()
+  // @IsNotEmpty()
+  // userId: string;
 
-  @IsIn(OrderStatusList)
-  @IsOptional()
-  status?: OrdersStatus;
+  // @IsNumber()
+  // @IsPositive()
+  // totalAmount: number;
+
+  // @IsIn(OrderStatusList)
+  // @IsOptional()
+  // status?: OrdersStatus;
+
+  // @IsInt()
+  // @IsNumber()
+  // @IsPositive()
+  // items: number;
 }

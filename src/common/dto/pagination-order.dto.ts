@@ -1,4 +1,4 @@
-import type { OrderBy } from 'src/orders/dto/order.interface';
+import type { OrderBy} from 'src/orders/dto/order.interface';
 
 import {
   OrderByList,
