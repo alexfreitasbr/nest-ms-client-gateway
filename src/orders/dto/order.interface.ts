@@ -34,7 +34,3 @@ export const OrderByList = [
   'createdAt',
   'updatedAt',
 ];
-
-export type OrderDirection = 'asc' | 'desc';
-
-export const OrderDirectionList: OrderDirection[] = ['asc', 'desc'];
