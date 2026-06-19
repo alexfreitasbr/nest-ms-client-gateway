@@ -26,7 +26,16 @@ export class ProductsController {
 
   @Post()
   createProduct(@Body() createProductDto: CreateProductDto) {
-    return this.productsClient.send({ cmd: 'createProduct' }, createProductDto);
+    const { name, price } = createProductDto;
+
+    return this.productsClient
+      .send({ cmd: 'createProduct' }, { name, price })
+      .pipe(
+        catchError((err) => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          throw new RpcException(err);
+        }),
+      );
   }
 
   @Get()
@@ -43,8 +52,8 @@ export class ProductsController {
   }
 
   @Get(':id')
-  getProductById(@Param('id') id: string) {
-    return this.productsClient.send({ cmd: 'findAllProducts' }, { id }).pipe(
+  getProductById(@Param('id', ParseIntPipe) id: number) {
+    return this.productsClient.send({ cmd: 'findOneProduct' }, { id }).pipe(
       catchError((err) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         throw new RpcException(err);
@@ -57,14 +66,10 @@ export class ProductsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateProductDto: UpdateProductDto,
   ) {
+    const { name, price } = updateProductDto;
+
     return this.productsClient
-      .send(
-        { cmd: 'update_product' },
-        {
-          id,
-          ...updateProductDto,
-        },
-      )
+      .send({ cmd: 'update_product' }, { id, name, price })
       .pipe(
         catchError((err) => {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -74,7 +79,7 @@ export class ProductsController {
   }
 
   @Delete(':id')
-  deleteProduct(@Param('id') id: string) {
+  deleteProduct(@Param('id', ParseIntPipe) id: number) {
     return this.productsClient.send({ cmd: 'deleteProduct' }, { id }).pipe(
       catchError((err) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
