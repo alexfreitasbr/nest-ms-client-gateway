@@ -31,12 +31,20 @@ export class ProductsController {
 
   @Get()
   getAllProducts(@Query() paginationDto: PaginationDto) {
-    return this.productsClient.send({ cmd: 'findAllProducts' }, paginationDto);
+    const { page, limit } = paginationDto;
+    return this.productsClient
+      .send({ cmd: 'findAllProducts' }, { page, limit })
+      .pipe(
+        catchError((err) => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          throw new RpcException(err);
+        }),
+      );
   }
 
   @Get(':id')
   getProductById(@Param('id') id: string) {
-    return this.productsClient.send({ cmd: 'findOneProduct' }, { id }).pipe(
+    return this.productsClient.send({ cmd: 'findAllProducts' }, { id }).pipe(
       catchError((err) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         throw new RpcException(err);
