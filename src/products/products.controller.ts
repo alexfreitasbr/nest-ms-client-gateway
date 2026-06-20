@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { PaginationDto } from 'src/common';
-import { PRODUCTS_SERVICE } from 'src/config';
+import { NATS_SERVICE } from 'src/config';
 import { catchError } from 'rxjs';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -20,40 +20,36 @@ import { UpdateProductDto } from './dto/update-product.dto';
 @Controller('products')
 export class ProductsController {
   constructor(
-    @Inject(PRODUCTS_SERVICE)
-    private readonly productsClient: ClientProxy,
+    @Inject(NATS_SERVICE)
+    private readonly client: ClientProxy,
   ) {}
 
   @Post()
   createProduct(@Body() createProductDto: CreateProductDto) {
     const { name, price } = createProductDto;
 
-    return this.productsClient
-      .send({ cmd: 'createProduct' }, { name, price })
-      .pipe(
-        catchError((err) => {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          throw new RpcException(err);
-        }),
-      );
+    return this.client.send({ cmd: 'createProduct' }, { name, price }).pipe(
+      catchError((err) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        throw new RpcException(err);
+      }),
+    );
   }
 
   @Get()
   getAllProducts(@Query() paginationDto: PaginationDto) {
     const { page, limit } = paginationDto;
-    return this.productsClient
-      .send({ cmd: 'findAllProducts' }, { page, limit })
-      .pipe(
-        catchError((err) => {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          throw new RpcException(err);
-        }),
-      );
+    return this.client.send({ cmd: 'findAllProducts' }, { page, limit }).pipe(
+      catchError((err) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        throw new RpcException(err);
+      }),
+    );
   }
 
   @Get(':id')
   getProductById(@Param('id', ParseIntPipe) id: number) {
-    return this.productsClient.send({ cmd: 'findOneProduct' }, { id }).pipe(
+    return this.client.send({ cmd: 'findOneProduct' }, { id }).pipe(
       catchError((err) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         throw new RpcException(err);
@@ -68,7 +64,7 @@ export class ProductsController {
   ) {
     const { name, price } = updateProductDto;
 
-    return this.productsClient
+    return this.client
       .send({ cmd: 'update_product' }, { id, name, price })
       .pipe(
         catchError((err) => {
@@ -80,7 +76,7 @@ export class ProductsController {
 
   @Delete(':id')
   deleteProduct(@Param('id', ParseIntPipe) id: number) {
-    return this.productsClient.send({ cmd: 'deleteProduct' }, { id }).pipe(
+    return this.client.send({ cmd: 'deleteProduct' }, { id }).pipe(
       catchError((err) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         throw new RpcException(err);
